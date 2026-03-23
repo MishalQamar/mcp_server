@@ -1,4 +1,4 @@
-from fastmcp import FastMCP
+from fastmcp import FastMCP  # pyright: ignore[reportMissingImports]
 
 from .config.settings import settings
 from .routers.prompts import register_mcp_prompts

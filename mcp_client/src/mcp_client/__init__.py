@@ -1,2 +1,6 @@
 def main() -> None:
-    print("Hello from mcp-client!")
+    """Client package entrypoint."""
+    raise SystemExit(
+        "mcp-client entrypoint is not implemented yet. "
+        "Use project-specific scripts to run the client workflow."
+    )
