@@ -4,8 +4,12 @@ from fastmcp import FastMCP
 
 from ..tools.extract_guidelines_urls_tool import extract_guidelines_urls_tool
 from ..tools.process_local_files_tool import process_local_files_tool
+from ..tools.process_github_urls_tool import process_github_urls_tool
 from ..tools.scrape_and_clean_other_urls_tool import (
     scrape_and_clean_other_urls_tool,
+)
+from ..tools.transcribe_youtube_videos_tool import (
+    transcribe_youtube_videos_tool,
 )
 
 
@@ -40,4 +44,22 @@ def register_mcp_tools(mcp: FastMCP) -> None:
         return await scrape_and_clean_other_urls_tool(
             research_directory=research_directory,
             concurrency_limit=concurrency_limit,
+        )
+
+    @mcp.tool(
+        name="process_github_urls",
+        description="Process GitHub URLs from the extracted guidelines metadata into LLM-friendly markdown digests.",
+    )
+    async def process_github_urls(research_directory: str) -> dict[str, Any]:
+        """Process GitHub URLs referenced in the article guidelines."""
+        return await process_github_urls_tool(research_directory=research_directory)
+
+    @mcp.tool(
+        name="transcribe_youtube_urls",
+        description="Transcribe YouTube video URLs from the extracted guidelines metadata into markdown transcripts.",
+    )
+    async def transcribe_youtube_urls(research_directory: str) -> dict[str, Any]:
+        """Transcribe YouTube videos referenced in the article guidelines."""
+        return await transcribe_youtube_videos_tool(
+            research_directory=research_directory
         )
