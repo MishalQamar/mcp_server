@@ -1,7 +1,8 @@
-from fastmcp import Client  # pyright: ignore[reportMissingImports]
+from fastmcp import Client
 from rich import print
 
 from .command_utils import handle_command
+from .handle_agent_loop_utils import handle_agent_loop
 from .print_utils import print_header
 from .types import InputType, ProcessedInput
 
@@ -22,7 +23,7 @@ async def handle_user_message(
     - print tool/resource/prompt info
     - load a server-hosted prompt
     - fetch a resource
-    - append a normal message to conversation history
+    - run the agent loop for normal messages
     """
 
     if processed_input.input_type in {
@@ -41,11 +42,24 @@ async def handle_user_message(
 
         prompt_result = await mcp_client.get_prompt(prompt_name)
         print_header(f"💬 Loaded Prompt: {prompt_name}")
-        print(prompt_result.messages[0].content.text)
+
+        prompt_text = ""
+        if getattr(prompt_result, "messages", None):
+            first_message = prompt_result.messages[0]
+            if hasattr(first_message, "content") and hasattr(
+                first_message.content, "text"
+            ):
+                prompt_text = first_message.content.text
+            else:
+                prompt_text = str(first_message)
+        else:
+            prompt_text = str(prompt_result)
+
+        print(prompt_text)
         conversation_history.append(
             {
                 "role": "user",
-                "content": prompt_result.messages[0].content.text,
+                "content": prompt_text,
             }
         )
         return
@@ -58,7 +72,11 @@ async def handle_user_message(
 
         resource_result = await mcp_client.read_resource(resource_uri)
         print_header(f"📚 Resource: {resource_uri}")
-        print(resource_result[0].text)
+
+        if resource_result and hasattr(resource_result[0], "text"):
+            print(resource_result[0].text)
+        else:
+            print(str(resource_result))
         return
 
     if processed_input.input_type == InputType.UNKNOWN_COMMAND:
@@ -72,7 +90,11 @@ async def handle_user_message(
                 "content": processed_input.raw_text,
             }
         )
-        print(
-            "[yellow]Agent loop not connected yet. This message was added to history.[/yellow]"
+
+        await handle_agent_loop(
+            conversation_history=conversation_history,
+            tools=tools,
+            client=mcp_client,
+            thinking_enabled=thinking_enabled,
         )
         return
