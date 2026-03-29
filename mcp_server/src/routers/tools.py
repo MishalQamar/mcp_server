@@ -3,8 +3,9 @@ from typing import Any
 from fastmcp import FastMCP
 
 from ..tools.extract_guidelines_urls_tool import extract_guidelines_urls_tool
-from ..tools.process_local_files_tool import process_local_files_tool
+from ..tools.generate_next_queries_tool import generate_next_queries_tool
 from ..tools.process_github_urls_tool import process_github_urls_tool
+from ..tools.process_local_files_tool import process_local_files_tool
 from ..tools.scrape_and_clean_other_urls_tool import (
     scrape_and_clean_other_urls_tool,
 )
@@ -62,4 +63,18 @@ def register_mcp_tools(mcp: FastMCP) -> None:
         """Transcribe YouTube videos referenced in the article guidelines."""
         return await transcribe_youtube_videos_tool(
             research_directory=research_directory
+        )
+
+    @mcp.tool(
+        name="generate_next_queries",
+        description="Analyze the current research context and generate the next set of web-search queries with reasons.",
+    )
+    async def generate_next_queries(
+        research_directory: str,
+        n_queries: int = 5,
+    ) -> dict[str, Any]:
+        """Generate the next candidate research queries from existing context."""
+        return await generate_next_queries_tool(
+            research_directory=research_directory,
+            n_queries=n_queries,
         )
