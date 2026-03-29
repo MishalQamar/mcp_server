@@ -1,6 +1,6 @@
 # MCP Server
 
-Python **[FastMCP](https://github.com/jlowin/fastmcp)** MCP server for research ingestion: **tools**, one **resource**, and one **prompt**. Give each tool a `research_directory` that contains `article_guideline.md` (artifacts go under `.nova/`). Connect from Cursor or any MCP host over **stdio**.
+Python **[FastMCP](https://github.com/jlowin/fastmcp)** MCP server for research ingestion: **tools**, one **resource**, and one **prompt**. Give each tool a `research_directory` that contains `article_guideline.md`. Connect from Cursor or any MCP host over **stdio**.
 
 ## Tools
 
